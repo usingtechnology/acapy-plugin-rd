@@ -1,0 +1,43 @@
+label: acapy plugin r & d
+
+# Admin
+admin: [0.0.0.0, 3001]
+admin-insecure-mode: false
+admin-api-key: change-me
+
+plugin:
+  - plugins.add_endpoint
+  - plugins.override_protocol
+
+block-plugin:
+  - aries_cloudagent.protocols.connections
+
+# Transport
+inbound-transport:
+  - [http, 0.0.0.0, 3000]
+  - [ws, 0.0.0.0, 3002]
+outbound-transport: http
+endpoint:
+  - http://localhost:3000
+enable-undelivered-queue: true
+
+# Ledger
+no-ledger: true
+
+# Connections
+debug-connections: true
+debug-credentials: true
+debug-presentations: true
+auto-accept-invites: true
+auto-accept-requests: true
+connections-invite: true
+# Modify for more output:
+log-level: debug
+
+# Accept mediation requests
+open-mediation: true
+
+multitenant: true
+multitenant-admin: true
+jwt-secret: change-me
+
