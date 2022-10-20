@@ -11,7 +11,7 @@ ENV PATH="/opt/poetry/bin:$PATH"
 RUN poetry config virtualenvs.in-project true
 
 # Setup project
-RUN mkdir acapy_plugin_pickup && touch acapy_plugin_pickup/__init__.py
+RUN mkdir plugins && touch plugins/__init__.py
 COPY pyproject.toml poetry.lock README.md ./
 RUN poetry install --no-dev -E indy
 USER $user

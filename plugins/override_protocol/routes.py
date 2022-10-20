@@ -65,16 +65,17 @@ def traction_deco(func):
         try:
             print('... calling...')
             ret = await func(request)
-            body = json.loads(ret.body)
+            return ret
+            # body = json.loads(ret.body)
 
-            if params["traction"]:
-            	body["~traction"] = params["traction"]
+            #if params["traction"]:
+            #	body["~traction"] = params["traction"]
 
             # ideally use something like Dispatcher.make_message when we have agentmessages
             # obj = BasicMessage.deserialize(body)
             #print(obj)
             #obj._decorators["traction"] = TractionDecorator(external_reference_id=params["external_reference_id"], tags=params["tags"])
-            return web.json_response(body)
+            #return web.json_response(body)
         finally:
             print('< traction_deco')
 
@@ -107,67 +108,10 @@ class TractionReceiveInvitationRequestSchema(ReceiveInvitationRequestSchema, Tra
     summary="Create a new connection invitation",
 )
 @querystring_schema(CreateInvitationQueryStringSchema())
-@request_schema(TractionCreateInvitationRequestSchema())
+@request_schema(CreateInvitationRequestSchema())
 @response_schema(InvitationResultSchema(), 200, description="")
 @traction_deco
 async def traction_connections_create_invitation(request: web.BaseRequest):
-    """
-    Request handler for creating a new connection invitation.
-
-    Args:
-        request: aiohttp request object
-
-    Returns:
-        The connection invitation details
-
-    """
-    context: AdminRequestContext = request["context"]
-    auto_accept = json.loads(request.query.get("auto_accept", "null"))
-    alias = request.query.get("alias")
-    public = json.loads(request.query.get("public", "false"))
-    multi_use = json.loads(request.query.get("multi_use", "false"))
-    body = await request.json() if request.body_exists else {}
-    my_label = body.get("my_label")
-    recipient_keys = body.get("recipient_keys")
-    service_endpoint = body.get("service_endpoint")
-    routing_keys = body.get("routing_keys")
-    metadata = body.get("metadata")
-    mediation_id = body.get("mediation_id")
-
-    if public and not context.settings.get("public_invites"):
-        raise web.HTTPForbidden(
-            reason="Configuration does not include public invitations"
-        )
-    profile = context.profile
-    base_url = profile.settings.get("invite_base_url")
-
-    connection_mgr = ConnectionManager(profile)
-    try:
-        (connection, invitation) = await connection_mgr.create_invitation(
-            my_label=my_label,
-            auto_accept=auto_accept,
-            public=public,
-            multi_use=multi_use,
-            alias=alias,
-            recipient_keys=recipient_keys,
-            my_endpoint=service_endpoint,
-            routing_keys=routing_keys,
-            metadata=metadata,
-            mediation_id=mediation_id,
-        )
-
-        result = {
-            "connection_id": connection and connection.connection_id,
-            "invitation": invitation.serialize(),
-            "invitation_url": invitation.to_url(base_url),
-        }
-    except (ConnectionManagerError, StorageError, BaseModelError) as err:
-        raise web.HTTPBadRequest(reason=err.roll_up) from err
-
-    if connection and connection.alias:
-        result["alias"] = connection.alias
-
-    return web.json_response(result)
     return await connections_create_invitation(request) 
 
 
