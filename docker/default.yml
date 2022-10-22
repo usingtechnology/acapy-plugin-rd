@@ -22,14 +22,15 @@ enable-undelivered-queue: true
 # plugins
 plugin:
   - aries_cloudagent.messaging.jsonld
-  - plugins.add_endpoint
-  - plugins.override_protocol
+  #- plugins.add_endpoint
+  #- plugins.override_protocol
+  - plugins.multitenant_multitoken
 
-block-plugin:
- - aries_cloudagent.protocols.connections
+#block-plugin:
+# - aries_cloudagent.protocols.connections
 
-invite: true
-invite-label: ACA-Py (R&D)
+#invite: true
+#invite-label: ACA-Py (R&D)
 
 #config 
 genesis-url: http://test.bcovrin.vonx.io/genesis
